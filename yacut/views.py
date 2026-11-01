@@ -1,6 +1,13 @@
 import asyncio
 
-from flask import current_app, flash, redirect, render_template, request, url_for
+from flask import (
+    current_app,
+    flash,
+    redirect,
+    render_template,
+    request,
+    url_for
+)
 
 from yacut import app, db
 from yacut.forms import FileUploadForm, URLMapForm
