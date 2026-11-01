@@ -1,0 +1,61 @@
+{% extends 'base.html' %}
+
+{% block content %}
+<section class="container my-5 px-4">
+    <h1 class="text-center"><span style="color:red">Ya</span>Cut</h1>
+    <p class="text-center my-4">
+        Создайте короткую ссылку автоматически или предложите свой вариант
+    </p>
+
+    <div class="container">
+        <div class="row my-3">
+            <div class="col-sm"></div>
+            <div class="col-sm">
+                <form method="post" novalidate>
+                    {{ form.hidden_tag() }}
+
+                    {{ form.original_link(
+                        class_='form-control form-control-lg py-2 mb-3',
+                        placeholder='Длинная ссылка'
+                    ) }}
+                    {% for error in form.original_link.errors %}
+                        <p><span style="color:red">{{ error }}</span></p>
+                    {% endfor %}
+
+                    {{ form.custom_id(
+                        class_='form-control form-control-lg py-2 mb-3',
+                        placeholder='Ваш вариант короткой ссылки'
+                    ) }}
+                    {% for error in form.custom_id.errors %}
+                        <p><span style="color:red">{{ error }}</span></p>
+                    {% endfor %}
+
+                    {{ form.submit(class_='btn btn-primary', value='Создать') }}
+                </form>
+            </div>
+            <div class="col-sm"></div>
+        </div>
+    </div>
+
+    {% with messages = get_flashed_messages() %}
+        {% if messages %}
+            {% for message in messages %}
+                <div class="text-center">
+                    <span style="color:red">{{ message }}</span>
+                </div>
+            {% endfor %}
+        {% endif %}
+    {% endwith %}
+
+    {% if short_link %}
+        <div class="text-center mt-4">
+            <h5>Ваша новая ссылка готова:</h5>
+            <p>
+                <a href="{{ short_link }}" target="_blank" rel="noopener">
+                    {{ short_link }}
+                </a>
+            </p>
+        </div>
+    {% endif %}
+</section>
+{% endblock %}

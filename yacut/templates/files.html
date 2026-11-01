@@ -1,0 +1,65 @@
+{% extends 'base.html' %}
+
+{% block content %}
+<section class="container my-5 px-4">
+    <h1 class="text-center"><span style="color:red">Ya</span>Cut</h1>
+    <p class="text-center my-4">
+        Загрузите файлы на Яндекс Диск и получите короткие ссылки
+    </p>
+
+    <div class="container">
+        <div class="row my-3 justify-content-center">
+            <div class="col-lg-6">
+                <form method="post" enctype="multipart/form-data" novalidate>
+                    {{ form.hidden_tag() }}
+
+                    {{ form.files(
+                        class_='form-control form-control-lg py-2 mb-3'
+                    ) }}
+                    {% for error in form.files.errors %}
+                        <p><span style="color:red">{{ error }}</span></p>
+                    {% endfor %}
+
+                    {{ form.submit(class_='btn btn-primary', value='Загрузить') }}
+                </form>
+            </div>
+        </div>
+    </div>
+
+    {% with messages = get_flashed_messages() %}
+        {% if messages %}
+            {% for message in messages %}
+                <div class="text-center">
+                    <span style="color:red">{{ message }}</span>
+                </div>
+            {% endfor %}
+        {% endif %}
+    {% endwith %}
+
+    {% if results %}
+        <div class="container mt-4">
+            <table class="table table-striped text-center">
+                <thead>
+                    <tr>
+                        <th>Файл</th>
+                        <th>Короткая ссылка</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    {% for filename, short_link in results %}
+                        <tr>
+                            <td>{{ filename }}</td>
+                            <td>
+                                <a href="{{ short_link }}" target="_blank"
+                                   rel="noopener">
+                                    {{ short_link }}
+                                </a>
+                            </td>
+                        </tr>
+                    {% endfor %}
+                </tbody>
+            </table>
+        </div>
+    {% endif %}
+</section>
+{% endblock %}

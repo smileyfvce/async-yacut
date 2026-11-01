@@ -1,0 +1,9 @@
+{% extends 'base.html' %}
+
+{% block content %}
+<section class="container my-5 px-4 text-center">
+    <h1>Ошибка {{ code }}</h1>
+    <p>{{ message }}</p>
+    <p><a href="{{ url_for('index_view') }}">На главную</a></p>
+</section>
+{% endblock %}
