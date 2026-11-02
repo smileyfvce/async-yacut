@@ -3,10 +3,7 @@ import urllib.parse
 
 import aiohttp
 
-API_HOST = 'https://cloud-api.yandex.net/'
-API_VERSION = 'v1'
-UPLOAD_URL = f'{API_HOST}{API_VERSION}/disk/resources/upload'
-DOWNLOAD_URL = f'{API_HOST}{API_VERSION}/disk/resources/download'
+from yacut.constants import DOWNLOAD_URL, UPLOAD_URL
 
 
 async def upload_file(session, file, token):

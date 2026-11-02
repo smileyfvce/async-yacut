@@ -1,0 +1,13 @@
+MAX_CUSTOM_ID_LENGTH = 16
+RESERVED_ID = 'files'
+SHORT_ID_LENGTH = 6
+SHORT_ID_ALPHABET = (
+    'abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789'
+)
+SHORT_ID_GENERATION_ATTEMPTS = 1000
+
+# YADISK API
+API_HOST = 'https://cloud-api.yandex.net/'
+API_VERSION = 'v1'
+UPLOAD_URL = f'{API_HOST}{API_VERSION}/disk/resources/upload'
+DOWNLOAD_URL = f'{API_HOST}{API_VERSION}/disk/resources/download'

@@ -1,12 +1,10 @@
+from http import HTTPStatus
 import re
-from flask import jsonify, request, url_for
+from flask import jsonify, request
 from yacut import app, db
+from yacut.constants import MAX_CUSTOM_ID_LENGTH, RESERVED_ID
 from yacut.error_handlers import InvalidAPIUsage
 from yacut.models import URLMap
-from yacut.utils import get_unique_short_id
-
-MAX_CUSTOM_ID_LENGTH = 16
-RESERVED_ID = 'files'
 
 
 @app.route('/api/id/', methods=['POST'])
@@ -35,31 +33,24 @@ def create_short_link():
             raise InvalidAPIUsage(
                 'Указано недопустимое имя для короткой ссылки'
             )
-        if custom_id == RESERVED_ID or URLMap.query.filter_by(
-            short=custom_id
-        ).first():
+        if custom_id == RESERVED_ID or URLMap.get_by_short(custom_id):
             raise InvalidAPIUsage(
                 'Предложенный вариант короткой ссылки уже существует.'
             )
         short_id = custom_id
     else:
-        short_id = get_unique_short_id()
+        short_id = URLMap.get_unique_short_id()
 
     url_map = URLMap(original=original, short=short_id)
     db.session.add(url_map)
     db.session.commit()
 
-    return jsonify({
-        'url': url_map.original,
-        'short_link': url_for(
-            'redirect_to_original', short_id=short_id, _external=True
-        ),
-    }), 201
+    return jsonify(url_map.to_dict()), HTTPStatus.CREATED
 
 
 @app.route('/api/id/<string:short_id>/', methods=['GET'])
 def get_original_link(short_id):
-    url_map = URLMap.query.filter_by(short=short_id).first()
+    url_map = URLMap.get_by_short(short_id)
     if url_map is None:
-        raise InvalidAPIUsage('Указанный id не найден', 404)
-    return jsonify({'url': url_map.original}), 200
+        raise InvalidAPIUsage('Указанный id не найден', HTTPStatus.NOT_FOUND)
+    return jsonify({'url': url_map.original}), HTTPStatus.OK

@@ -1,6 +1,7 @@
 import asyncio
 
 from flask import (
+    abort,
     current_app,
     flash,
     redirect,
@@ -10,12 +11,10 @@ from flask import (
 )
 
 from yacut import app, db
+from yacut.constants import RESERVED_ID
 from yacut.forms import FileUploadForm, URLMapForm
 from yacut.models import URLMap
-from yacut.utils import get_unique_short_id
 from yacut.yandex_disk import upload_files
-
-RESERVED_ID = "files"
 
 
 @app.route("/", methods=["GET", "POST"])
@@ -30,13 +29,13 @@ def index_view():
         if custom_id:
             if (
                 custom_id == RESERVED_ID
-                or URLMap.query.filter_by(short=custom_id).first()
+                or URLMap.get_by_short(custom_id)
             ):
                 flash("Предложенный вариант короткой ссылки уже существует.")
                 return render_template("index.html", form=form)
             short_id = custom_id
         else:
-            short_id = get_unique_short_id()
+            short_id = URLMap.get_unique_short_id()
 
         db.session.add(URLMap(original=original, short=short_id))
         db.session.commit()
@@ -62,7 +61,7 @@ def files_page():
 
             results = []
             for file_obj, download_url in zip(files, download_urls):
-                short_id = get_unique_short_id()
+                short_id = URLMap.get_unique_short_id()
                 db.session.add(URLMap(original=download_url, short=short_id))
                 db.session.commit()
                 short_link = url_for(
@@ -77,5 +76,7 @@ def files_page():
 
 @app.route("/<string:short_id>")
 def redirect_to_original(short_id):
-    url_map = URLMap.query.filter_by(short=short_id).first_or_404()
+    url_map = URLMap.get_by_short(short_id)
+    if url_map is None:
+        abort(404)
     return redirect(url_map.original)

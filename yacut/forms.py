@@ -3,7 +3,7 @@ from flask_wtf.file import FileRequired, MultipleFileField
 from wtforms import StringField, SubmitField
 from wtforms.validators import URL, DataRequired, Length, Optional
 
-MAX_LENGTH_SHORT_ID = 16
+from yacut.constants import MAX_CUSTOM_ID_LENGTH
 
 
 class URLMapForm(FlaskForm):
@@ -19,8 +19,8 @@ class URLMapForm(FlaskForm):
         validators=[
             Optional(),
             Length(
-                max=MAX_LENGTH_SHORT_ID,
-                message=f'Не более {MAX_LENGTH_SHORT_ID} символов',
+                max=MAX_CUSTOM_ID_LENGTH,
+                message=f'Не более {MAX_CUSTOM_ID_LENGTH} символов',
             )
         ],
     )
